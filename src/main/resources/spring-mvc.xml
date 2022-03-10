@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <!--开放资源的访问-->
+    <!--<mvc:resources mapping="/js/**" location="/js/"/>-->
+    <!--<mvc:resources mapping="/img/**" location="/img/"/>-->
+    <!--自动-->
+    <mvc:default-servlet-handler/>
+
+
+    <!--mvc的注解驱动-->
+    <mvc:annotation-driven conversion-service="conversionService"/>
+
+
+    <!--注册类型转换器conversionService -->
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <list>
+
+            </list>
+        </property>
+    </bean>
+
+
+    <!--配置内部资源视图解析器-->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value=""/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+
+    <!--Controller的组件扫描-->
+    <context:component-scan base-package="mao.spring_mvc_interceptor">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+
+    <!-- 配置拦截器 , 不拦截webapp下的jsp页面-->
+    <mvc:interceptors>
+        <!-- 配置一个全局拦截器，拦截所有请求 -->
+        <!--<bean class="包名.类名"/>-->
+
+        <mvc:interceptor>
+            <!-- 配置拦截器作用的路径 -->
+            <mvc:mapping path="/**"/>
+            <!-- 配置不需要拦截作用的路径 -->
+            <mvc:exclude-mapping path="/login.jsp"/>
+            <mvc:exclude-mapping path="/login"/>
+            <!-- 定义<mvc:interceptor>元素中，表示匹配指定路径的请求才进行拦截 -->
+            <bean class="mao.spring_mvc_interceptor.LoginInterceptor"/>
+        </mvc:interceptor>
+
+    </mvc:interceptors>
+    <!--<mvc:interceptors>：该元素用于配置一组拦截器。-->
+    <!--<bean>：该元素是 <mvc:interceptors> 的子元素，用于定义全局拦截器，即拦截所有的请求。-->
+    <!--<mvc:interceptor>：该元素用于定义指定路径的拦截器。-->
+    <!--<mvc:mapping>：该元素是 <mvc:interceptor> 的子元素，用于配置拦截器作用的路径，该路径在其属性 path 中定义-->
+
+</beans>
